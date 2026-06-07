@@ -4,84 +4,59 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>TBH Farming Optimizer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0d1117;color:#c9d1d9;font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
 .container{max-width:680px;width:100%}
-
-/* HEADER */
 .header{text-align:center;padding:32px 0 24px}
 .header h1{font-size:1.3rem;font-weight:700;color:#58a6ff;letter-spacing:-.3px}
 .header h1 span{color:#8b949e;font-weight:400}
 .header .sub{color:#484f58;font-size:.75rem;margin-top:4px}
-
-/* DROP ZONE */
 .drop-zone{background:#161b22;border:2px dashed #21262d;border-radius:12px;padding:48px 24px;text-align:center;cursor:pointer;transition:all .3s}
 .drop-zone:hover,.drop-zone.dragover{border-color:#58a6ff;background:#1c2333}
 .drop-zone .icon{font-size:2.5rem;margin-bottom:8px;color:#484f58}
 .drop-zone p{color:#8b949e;font-size:.85rem}
 .drop-zone .hint{color:#484f58;font-size:.7rem;margin-top:8px;font-family:'JetBrains Mono',monospace}
 .drop-zone input{display:none}
-
-/* LOADING */
 #loading{display:none;text-align:center;padding:40px}
 .spinner{width:28px;height:28px;border:2px solid #21262d;border-top-color:#58a6ff;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
 @keyframes spin{to{transform:rotate(360deg)}}
 #loading p{color:#484f58;font-size:.82rem}
-
-/* CARDS */
 .card{background:#161b22;border:1px solid #21262d;border-radius:10px;padding:20px;margin-bottom:14px}
 .card-title{font-size:.9rem;font-weight:600;color:#58a6ff;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #21262d}
-.card-title .pill{font-weight:400;font-size:.7rem;background:#1c2333;color:#484f58;padding:2px 8px;border-radius:8px;margin-left:8px}
-
-/* PLAYER STATUS */
 .stat-row{display:flex;justify-content:space-between;padding:4px 0;font-size:.82rem}
 .stat-row .label{color:#8b949e}
 .stat-row .value{color:#c9d1d9;font-weight:500}
 .stat-row .value.gold{color:#d29922}
-.stat-row .value.exp{color:#bc8cff}
 .stat-row .value.highlight{color:#58a6ff}
-
-/* BADGES */
 .badge{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.65rem;font-weight:600}
 .badge.normal{background:rgba(56,139,253,.15);color:#58a6ff}
 .badge.nightmare{background:rgba(248,81,73,.15);color:#f85149}
 .badge.hell{background:rgba(210,153,34,.15);color:#d29922}
 .badge.torment{background:rgba(188,140,255,.15);color:#bc8cff}
-
-/* RECOMMENDATION BOX */
 .rec{background:#1c2333;border-radius:8px;padding:14px 16px;margin-bottom:10px;border-left:3px solid #58a6ff}
 .rec.gold{border-left-color:#d29922}
 .rec.exp{border-left-color:#bc8cff}
 .rec.push{border-left-color:#3fb950}
-.rec.next{border-left-color:#f85149}
 .rec .rec-title{font-size:.82rem;font-weight:600;margin-bottom:4px}
 .rec .rec-title.gold{color:#d29922}
 .rec .rec-title.exp{color:#bc8cff}
 .rec .rec-title.push{color:#3fb950}
-.rec .rec-title.next{color:#f85149}
 .rec p{font-size:.78rem;color:#8b949e;margin:2px 0}
 .rec .val{font-weight:600;font-family:'JetBrains Mono',monospace;color:#c9d1d9}
-
-/* PROGRESS BLOCKER */
 .blocker{background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:12px 14px;margin:8px 0}
 .blocker p{font-size:.78rem;color:#f85149}
 .blocker .title{font-weight:600;font-size:.82rem;margin-bottom:4px}
-
-/* TIPS */
 .tips{background:#1c2333;border-radius:8px;padding:14px 16px}
 .tips p{font-size:.78rem;color:#8b949e;margin:3px 0;padding-left:12px}
 .tips .t{color:#c9d1d9}
-
-/* FOOTER */
 .footer{text-align:center;color:#484f58;font-size:.68rem;padding:24px 0;border-top:1px solid #21262d;margin-top:16px}
 .footer a{color:#58a6ff;text-decoration:none}
-
 #output{display:none}
 #error{display:none;background:rgba(248,81,73,.08);border:1px solid #f85149;border-radius:8px;padding:12px;color:#f85149;font-size:.82rem;margin-bottom:14px}
-
 .hero-icon{display:inline-block;width:24px;height:24px;line-height:24px;border-radius:50%;font-size:.6rem;font-weight:700;text-align:center;margin:0 1px}
 .hero-icon.priest{background:rgba(63,185,80,.2);color:#3fb950}
 .hero-icon.ranger{background:rgba(56,139,253,.2);color:#58a6ff}
@@ -93,12 +68,10 @@ body{background:#0d1117;color:#c9d1d9;font-family:'Inter',sans-serif;min-height:
 </head>
 <body>
 <div class="container">
-
 <div class="header">
   <h1>TBH <span>Farming Optimizer</span></h1>
   <div class="sub">Solte seu save e descubra o que fazer</div>
 </div>
-
 <div class="drop-zone" id="dropZone">
   <div class="icon">&#128230;</div>
   <p><strong>Solte seu save aqui</strong></p>
@@ -106,11 +79,9 @@ body{background:#0d1117;color:#c9d1d9;font-family:'Inter',sans-serif;min-height:
   <div class="hint">%USERPROFILE%\AppData\LocalLow\TesseractStudio\TaskbarHero\</div>
   <input type="file" id="fileInput" accept=".es3,.bak,*">
 </div>
-
 <div id="loading"><div class="spinner"></div><p>Decriptando save...</p></div>
 <div id="error"></div>
 <div id="output"></div>
-
 <div class="footer">
   <a href="https://github.com/Holdboy1/tbh-optimizer" target="_blank">GitHub</a> &middot;
   100% local &middot; Dados via <a href="https://taskbarhero.wiki" target="_blank">TBH Wiki</a>
@@ -121,14 +92,8 @@ body{background:#0d1117;color:#c9d1d9;font-family:'Inter',sans-serif;min-height:
 const PASSWORD = "emuMqG3bLYJ938ZDCfieWJ";
 const STAGES_URL = "https://taskbarhero.wiki/data/stages.json";
 const DIFFS = ["NORMAL","NIGHTMARE","HELL","TORMENT"];
-const HEROES = {
-  101:"Knight", 201:"Priest", 301:"Ranger",
-  401:"Sorcerer", 501:"Hunter", 601:"Slayer"
-};
-const HERO_CLASS = {
-  101:"knight", 201:"priest", 301:"ranger",
-  401:"sorcerer", 501:"hunter", 601:"slayer"
-};
+const HEROES = {101:"Knight",201:"Priest",301:"Ranger",401:"Sorcerer",501:"Hunter",601:"Slayer"};
+const HERO_CLASS = {101:"knight",201:"priest",301:"ranger",401:"sorcerer",501:"hunter",601:"slayer"};
 const CLEAR_S = 30;
 
 const dz = document.getElementById("dropZone");
@@ -143,20 +108,44 @@ dz.ondragleave = () => dz.classList.remove("dragover");
 dz.ondrop = e => { e.preventDefault(); dz.classList.remove("dragover"); const f=e.dataTransfer.files[0]; if(f)process(f); };
 fi.onchange = e => { if(e.target.files[0])process(e.target.files[0]); };
 
-async function pbkdf2(pw, salt) {
-  if (!crypto?.subtle) throw new Error("Criptografia indisponivel - use HTTPS");
-  const key = await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveBits"]);
-  return new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",salt,iterations:100,hash:"SHA-1"},key,128));
+// Convert Uint8Array to CryptoJS WordArray
+function toWA(buf) {
+  const words = [];
+  for (let i = 0; i < buf.length; i += 4) {
+    words.push(
+      (buf[i] << 24) | (buf[i + 1] << 16) | (buf[i + 2] << 8) | buf[i + 3]
+    );
+  }
+  return CryptoJS.lib.WordArray.create(words, buf.length);
 }
 
-async function decrypt(buf) {
-  const d = new Uint8Array(buf);
-  if (d.length < 17) throw new Error("Arquivo muito pequeno");
-  const salt = d.slice(0,16);
-  const k = await pbkdf2(PASSWORD, salt);
-  const key = await crypto.subtle.importKey("raw",k,{name:"AES-CBC"},false,["decrypt"]);
-  const dec = await crypto.subtle.decrypt({name:"AES-CBC",iv:salt},key,d.slice(16));
-  return JSON.parse(new TextDecoder("utf-8").decode(dec));
+// Convert WordArray to UTF-8 string
+function waToStr(wa) {
+  return CryptoJS.enc.Utf8.stringify(wa);
+}
+
+function decrypt(buf) {
+  if (buf.length < 17) throw new Error("Arquivo muito pequeno");
+  const saltBytes = buf.slice(0, 16);
+  const encBytes = buf.slice(16);
+
+  const salt = toWA(saltBytes);
+  const encrypted = toWA(encBytes);
+
+  const key = CryptoJS.PBKDF2(PASSWORD, salt, {
+    keySize: 128 / 32,
+    iterations: 100,
+    hasher: CryptoJS.algo.SHA1
+  });
+
+  const decrypted = CryptoJS.AES.decrypt(
+    { ciphertext: encrypted },
+    key,
+    { iv: salt, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+  );
+
+  const text = waToStr(decrypted);
+  return JSON.parse(text);
 }
 
 function estLevel(k) {
@@ -200,36 +189,25 @@ function diffOf(key) {
   return DIFFS[Math.floor(Number(key)/1000)-1]||"NORMAL";
 }
 
-function formatStage(key) {
-  const n = Number(key);
-  if(!n) return "?";
-  const a = Math.floor((n/100)%10);
-  const s = n%100;
-  const d = diffOf(n);
-  return `${a}-${String(s).padStart(2,"0")} ${d}`;
-}
-
-function needsAct3(d) {
-  // NORMAL d=0: complete act3
-  if(d === 0) return {act:3, prefix:1};
-  return null;
-}
-
 async function process(file) {
   err.style.display = "none";
   out.style.display = "none";
   ld.style.display = "block";
 
   try {
-    const buf = await file.arrayBuffer();
-    const save = await decrypt(buf);
+    const buf = new Uint8Array(await file.arrayBuffer());
+
+    // Check ES3 header
+    const header = new TextDecoder().decode(buf.slice(0, 3));
+    if (header !== "ES3") console.log("[TBH] Aviso: arquivo nao comeca com ES3 header");
+
+    const save = decrypt(buf);
     ld.style.display = "none";
     dz.style.display = "none";
 
     const pd = parseSave(save);
     const stages = await fetchStages();
 
-    // Calculate stats
     const lv = pd.level;
     const ms = pd.maxStage;
     const mact = Math.floor((ms/100)%10);
@@ -237,82 +215,60 @@ async function process(file) {
     const curDiff = diffOf(ms);
     const curDiffIdx = DIFFS.indexOf(curDiff);
     const hrs = fmtTime(pd.playTime);
-
-    // Available difficulties
     const availDiffs = DIFFS.slice(0, curDiffIdx + 1);
 
-    // Filter farmable stages
     const farmable = stages.filter(s => {
       const si = DIFFS.indexOf(s.difficulty);
-      const sl = s.level;
       if (si > curDiffIdx) return false;
-      if (sl > lv + 10) return false;
+      if (s.level > lv + 10) return false;
       return true;
     });
 
-    // Best gold & exp
     const byGold = [...farmable].sort((a,b)=>b.goldPerClear - a.goldPerClear);
     const byExp = [...farmable].sort((a,b)=>b.expPerClear - a.expPerClear);
     const bestGold = byGold[0];
     const bestExp = byExp[0];
 
-    // Check next unlock
     let nextDiff = DIFFS[curDiffIdx + 1];
     let unlockMsg = "";
     let isBlocked = false;
 
     if (nextDiff) {
-      // Check if they have a full act cleared on current difficulty
-      // Simple heuristic: need to reach x099 where x is difficulty prefix
-      // For NORMAL->NIGHTMARE: need maxStage >= 3099 or at least act 3 stage 10
-      // More precisely: complete all 10 stages of act 3
-      const neededStage = (curDiffIdx + 1) * 1000 + 3 * 100 + 10; // e.g. 1310 for NORMAL act 3-10
+      const neededStage = (curDiffIdx + 1) * 1000 + 3 * 100 + 10;
       if (ms < neededStage) {
         isBlocked = true;
         unlockMsg = `Complete <strong>3-10</strong> em <strong>${curDiff}</strong> para liberar <strong>${nextDiff}</strong>`;
       } else {
-        unlockMsg = `<strong>${nextDiff}</strong> disponivel! Vá para o stage 1 de ${nextDiff}.`;
+        unlockMsg = `<strong>${nextDiff}</strong> disponivel! Va para o stage 1 de ${nextDiff}.`;
       }
     }
 
-    // Build output
     let html = '<div class="card">';
     html += `<div class="card-title">Status do Jogador</div>`;
     html += `<div class="stat-row"><span class="label">Nivel</span><span class="value highlight">${lv}</span></div>`;
     html += `<div class="stat-row"><span class="label">Maior stage</span><span class="value">${mact}-${String(mstg).padStart(2,"0")} <span class="badge ${curDiff.toLowerCase()}">${curDiff}</span></span></div>`;
-
     const heroNames = pd.heroes.map(h => {
       const cls = HERO_CLASS[h];
       return `<span class="hero-icon ${cls}">${HEROES[h]?.[0]||"?"}</span> ${HEROES[h]||"Heroi"}`;
     });
     html += `<div class="stat-row"><span class="label">Herois</span><span class="value">${heroNames.join(", ")}</span></div>`;
     html += `<div class="stat-row"><span class="label">Tempo jogado</span><span class="value">${hrs}</span></div>`;
-    if (pd.gold !== null) {
-      html += `<div class="stat-row"><span class="label">Ouro</span><span class="value gold">${fmtNum(pd.gold)}</span></div>`;
-    }
+    if (pd.gold !== null) html += `<div class="stat-row"><span class="label">Ouro</span><span class="value gold">${fmtNum(pd.gold)}</span></div>`;
     html += `</div>`;
 
-    // Blockers / Next steps
     html += '<div class="card">';
     html += `<div class="card-title">Proximo Passo</div>`;
-
     if (isBlocked) {
       html += `<div class="blocker"><div class="title">&#9888; Bloqueio de dificuldade</div><p>${unlockMsg}</p></div>`;
     } else if (nextDiff) {
-      html += `<div class="rec next"><div class="rec-title next">&#9989; ${unlockMsg}</div></div>`;
-    } else {
-      html += `<p style="color:#8b949e;font-size:.82rem">Voce desbloqueou todas as dificuldades!</p>`;
+      html += `<div class="rec push"><div class="rec-title push" style="color:#3fb950">&#9989; Proxima dificuldade</div><p>${unlockMsg}</p></div>`;
     }
-
-    // Show available stages count
     html += `<div class="stat-row" style="margin-top:10px"><span class="label">Stages viaveis</span><span class="value">${farmable.length} de ${stages.length}</span></div>`;
     html += `<div class="stat-row"><span class="label">Dificuldades</span><span class="value">${availDiffs.map(d=>`<span class="badge ${d.toLowerCase()}">${d}</span>`).join(" ")}</span></div>`;
     html += `</div>`;
 
-    // Recommendations
     html += '<div class="card">';
     html += `<div class="card-title">Recomendacao de Mapas</div>`;
-
     if (bestGold) {
       const g = (bestGold.goldPerClear||0) * 10;
       html += `<div class="rec gold">
@@ -320,10 +276,9 @@ async function process(file) {
         <p><strong>${bestGold.act}-${String(bestGold.no).padStart(2,"0")} ${bestGold.name?.["en-US"]||""}</strong> <span class="badge ${bestGold.difficulty.toLowerCase()}">${bestGold.difficulty}</span></p>
         <p><span class="val">${fmtNum(g)}</span> gold/clear &bull; <span class="val">~${fmtNum(g*120)}</span>/hora</p>
         <p>${bestGold.waves||0} waves &bull; Lv ${bestGold.level}</p>
-        <p style="margin-top:4px;color:#484f58">Use equipamentos Gold Find e pet de ouro</p>
+        <p style="margin-top:4px;color:#484f58">Use Gold Find + pet de ouro</p>
       </div>`;
     }
-
     if (bestExp && bestExp.key !== bestGold?.key) {
       const e = (bestExp.expPerClear||0) * 10;
       html += `<div class="rec exp">
@@ -331,68 +286,49 @@ async function process(file) {
         <p><strong>${bestExp.act}-${String(bestExp.no).padStart(2,"0")} ${bestExp.name?.["en-US"]||""}</strong> <span class="badge ${bestExp.difficulty.toLowerCase()}">${bestExp.difficulty}</span></p>
         <p><span class="val">${fmtNum(e)}</span> exp/clear &bull; <span class="val">~${fmtNum(e*120)}</span>/hora</p>
         <p>${bestExp.waves||0} waves &bull; Lv ${bestExp.level}</p>
-        <p style="margin-top:4px;color:#484f58">Use runas de EXP e pet de experiencia</p>
+        <p style="margin-top:4px;color:#484f58">Use runas de EXP + pet de experiencia</p>
       </div>`;
     }
-
-    // Push recommendation
-    const push = farmable
-      .filter(s => s.level >= lv - 2 && s.level <= lv + 5)
-      .sort((a,b) => b.level - a.level)
-      .slice(0, 1);
+    const push = farmable.filter(s=>s.level>=lv-2&&s.level<=lv+5).sort((a,b)=>b.level-a.level).slice(0,1);
     if (push.length) {
       const p = push[0];
-      const diff = p.level - lv;
-      const sg = diff > 0 ? `+${diff}` : diff < 0 ? `${diff}` : "=";
+      const d = p.level - lv;
+      const sg = d > 0 ? `+${d}` : d < 0 ? `${d}` : "=";
       html += `<div class="rec push">
         <div class="rec-title push">Proximo stage para PUSH</div>
         <p><strong>${p.act}-${String(p.no).padStart(2,"0")} ${p.name?.["en-US"]||""}</strong> <span class="badge ${p.difficulty.toLowerCase()}">${p.difficulty}</span></p>
         <p>Lv ${p.level} (${sg} seu nivel) &bull; ${p.waves||0} waves</p>
       </div>`;
     }
-
     html += `</div>`;
 
-    // Tips
     html += '<div class="card">';
     html += `<div class="card-title">Dicas pra Melhorar</div>`;
     html += `<div class="tips">`;
-
     const hasSorcerer = pd.heroes.includes(401);
     const hasPriest = pd.heroes.includes(201);
     const hasRanger = pd.heroes.includes(301);
-
     if (hasSorcerer && hasPriest && hasRanger) {
       html += `<p class="t">&#10003; Voce ja tem o trio ideal (Sorcerer + Priest + Ranger)</p>`;
     } else {
       html += `<p>&#9679; Priorize conseguir <strong class="t">Sorcerer + Priest + Ranger</strong> (melhor trio de farm)</p>`;
     }
-
-    // Runes
     html += `<p>&#9679; Priorize <strong class="t">Runa Command</strong> (+heroi) e <strong class="t">Awakening</strong> (+skill)</p>`;
-
-    // Gold find
     if (pd.gold !== null && pd.gold < 100000) {
       html += `<p>&#9679; Equipe <strong class="t">Gold Find</strong> nos equipamentos pra acelerar economia</p>`;
     }
-
-    // Progression
     if (nextDiff) {
       html += `<p>&#9679; Foque em completar <strong class="t">Ato 3</strong> em ${curDiff} para liberar ${nextDiff}</p>`;
     }
-
     html += `</div></div>`;
 
     out.innerHTML = html;
     out.style.display = "block";
 
   } catch(e) {
-    console.error(e);
+    console.error("[TBH]", e);
     ld.style.display = "none";
     let msg = e.message;
-    if (msg.includes("crypto") || msg.includes("subtle")) msg = "Criptografia indisponivel no navegador. Tente Chrome/Edge atualizado.";
-    else if (msg.includes("fetch")) msg = "Nao foi possivel carregar dados dos stages. Verifique sua internet.";
-    else if (msg.includes("AES") || msg.includes("CBC")) msg = "Falha ao decriptar o save. Confirme se e um arquivo valido do TBH.";
     err.innerHTML = `<strong>Erro:</strong> ${msg}`;
     err.style.display = "block";
   }
