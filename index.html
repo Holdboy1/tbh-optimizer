@@ -245,16 +245,18 @@ const si = $("saveInfo"), re = $("results"), ee = $("error"), ld = $("loading");
 dz.onclick = () => fi.click();
 dz.ondragover = e => { e.preventDefault(); dz.classList.add("dragover"); };
 dz.ondragleave = () => dz.classList.remove("dragover");
-dz.ondrop = e => { e.preventDefault(); dz.classList.remove("dragover"); const f=e.dataTransfer.files[0]; if(f)go(f); };
-fi.onchange = e => { if(e.target.files[0])go(e.target.files[0]); };
+dz.ondrop = e => { e.preventDefault(); dz.classList.remove("dragover"); const f=e.dataTransfer.files[0]; if(f)go(f).catch(err => console.error(err)); };
+fi.onchange = e => { if(e.target.files[0])go(e.target.files[0]).catch(err => console.error(err)); };
 
 async function pbkdf2(pw, salt) {
+  if (!crypto?.subtle) throw new Error("crypto.subtle nao disponivel - use HTTPS ou localhost");
   const key = await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveBits"]);
   return new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",salt,iterations:100,hash:"SHA-1"},key,128));
 }
 
 async function decrypt(buf) {
   const d = new Uint8Array(buf);
+  if (d.length < 17) throw new Error("Arquivo muito pequeno para ser um save do TBH");
   const salt = d.slice(0,16);
   const k = await pbkdf2(PASSWORD, salt);
   const key = await crypto.subtle.importKey("raw",k,{name:"AES-CBC"},false,["decrypt"]);
@@ -595,18 +597,38 @@ async function go(file) {
   dz.classList.add("has-file");
 
   try {
+    console.log("[TBH] Lendo arquivo:", file.name, file.size, "bytes");
     const buf = await file.arrayBuffer();
+    console.log("[TBH] Arquivo lido:", buf.byteLength, "bytes");
+
+    console.log("[TBH] Decriptando ES3...");
     const save = await decrypt(buf);
+    console.log("[TBH] Decriptado com sucesso");
+
     ld.style.display = "none";
     dz.style.display = "none";
 
     const pd = parseSave(save);
+    console.log("[TBH] Save parseado:", JSON.stringify(pd));
+
+    console.log("[TBH] Buscando stages...");
     const stages = await fetchStages();
+    console.log("[TBH] Stages carregados:", stages.length);
+
     const all = analyze(stages, pd);
     render(pd, all);
   } catch(e) {
+    console.error("[TBH] ERRO:", e);
     ld.style.display = "none";
-    ee.innerHTML = `<strong>Erro ao processar save:</strong> ${e.message}<br><span style="color:var(--text2);font-size:.8rem">Verifique se o arquivo &eacute; um save v&aacute;lido do Taskbar Hero.</span>`;
+    let msg = e.message;
+    if(e instanceof TypeError && e.message.includes("subtle")) {
+      msg = "API de criptografia nao disponivel. Use HTTPS (Netlify) ou localhost.";
+    } else if(e.message.includes("fetch") || e.message.includes("NetworkError")) {
+      msg = "Erro ao buscar dados dos stages. Verifique sua conexao.";
+    } else if(e.message.includes("AES") || e.message.includes("CBC") || e.message.includes("decrypt")) {
+      msg = "Falha na decriptacao. O arquivo pode ser invalido ou de outro jogo.";
+    }
+    ee.innerHTML = `<strong>Erro:</strong> ${msg}`;
     ee.style.display = "block";
   }
 }
