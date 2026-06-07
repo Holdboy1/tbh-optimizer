@@ -5,258 +5,153 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>TBH Farming Optimizer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #0a0c10;
-  --bg2: #111318;
-  --bg3: #181b24;
-  --bg4: #1e2230;
-  --border: #2a2e3a;
-  --border2: #3a3f4e;
-  --text: #c8ccd4;
-  --text2: #8a8f9a;
-  --text3: #5a5e6a;
-  --gold: #d4a84b;
-  --gold2: #f0c860;
-  --gold3: #a07828;
-  --exp: #a686e6;
-  --exp2: #c4a8ff;
-  --blue: #4a8cff;
-  --blue2: #6ba3ff;
-  --green: #3fb950;
-  --red: #f85149;
-  --orange: #f0883e;
-  --radius: 10px;
-  --radius-sm: 6px;
-}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
-::selection{background:var(--gold);color:#000}
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:var(--bg2)}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+body{background:#0d1117;color:#c9d1d9;font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:680px;width:100%}
 
-.bg-pattern{position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:radial-gradient(ellipse at 20% 50%,rgba(212,168,75,.03) 0%,transparent 60%),
-    radial-gradient(ellipse at 80% 20%,rgba(166,134,230,.03) 0%,transparent 60%),
-    repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,.008) 40px,rgba(255,255,255,.008) 41px)}
+/* HEADER */
+.header{text-align:center;padding:32px 0 24px}
+.header h1{font-size:1.3rem;font-weight:700;color:#58a6ff;letter-spacing:-.3px}
+.header h1 span{color:#8b949e;font-weight:400}
+.header .sub{color:#484f58;font-size:.75rem;margin-top:4px}
 
-.container{max-width:960px;margin:0 auto;padding:0 16px;position:relative;z-index:1}
-
-.header{padding:24px 0 16px;text-align:center}
-.header h1{font-family:'Cinzel',serif;font-size:1.6rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:3px}
-.header h1 span{color:var(--exp2)}
-.header .sub{color:var(--text2);font-size:.8rem;margin-top:4px;letter-spacing:1px}
-.header .line{width:60px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:10px auto 0}
-
-.drop-zone{background:var(--bg3);border:2px dashed var(--border2);border-radius:var(--radius);padding:40px 20px;text-align:center;cursor:pointer;transition:all .3s;margin-bottom:20px}
-.drop-zone:hover,.drop-zone.dragover{border-color:var(--gold);background:var(--bg4);box-shadow:0 0 30px rgba(212,168,75,.08)}
-.drop-zone .icon{font-size:2.8rem;color:var(--text3);margin-bottom:8px;transition:transform .3s}
-.drop-zone:hover .icon{transform:scale(1.1);color:var(--gold)}
-.drop-zone .dz-title{font-size:1rem;color:var(--text);font-weight:600}
-.drop-zone .dz-sub{color:var(--text2);font-size:.8rem;margin-top:4px}
-.drop-zone .dz-hint{color:var(--text3);font-size:.7rem;margin-top:8px;font-family:'JetBrains Mono',monospace}
+/* DROP ZONE */
+.drop-zone{background:#161b22;border:2px dashed #21262d;border-radius:12px;padding:48px 24px;text-align:center;cursor:pointer;transition:all .3s}
+.drop-zone:hover,.drop-zone.dragover{border-color:#58a6ff;background:#1c2333}
+.drop-zone .icon{font-size:2.5rem;margin-bottom:8px;color:#484f58}
+.drop-zone p{color:#8b949e;font-size:.85rem}
+.drop-zone .hint{color:#484f58;font-size:.7rem;margin-top:8px;font-family:'JetBrains Mono',monospace}
 .drop-zone input{display:none}
-.drop-zone.has-file{border-color:var(--gold);background:var(--bg4)}
-.drop-zone.has-file .dz-title{color:var(--gold)}
-#fileLabel{color:var(--text3);font-size:.75rem;display:block;margin-top:4px}
 
-#loading{display:none;text-align:center;padding:40px 20px}
-.spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
+/* LOADING */
+#loading{display:none;text-align:center;padding:40px}
+.spinner{width:28px;height:28px;border:2px solid #21262d;border-top-color:#58a6ff;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
 @keyframes spin{to{transform:rotate(360deg)}}
-#loading p{color:var(--text2);font-size:.85rem}
+#loading p{color:#484f58;font-size:.82rem}
 
-.card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
-.card-title{font-family:'Cinzel',serif;font-size:.95rem;color:var(--gold);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-.card-title .badge{font-family:'Inter',sans-serif;font-size:.65rem;background:var(--bg4);color:var(--text2);padding:1px 8px;border-radius:10px;margin-left:auto}
+/* CARDS */
+.card{background:#161b22;border:1px solid #21262d;border-radius:10px;padding:20px;margin-bottom:14px}
+.card-title{font-size:.9rem;font-weight:600;color:#58a6ff;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #21262d}
+.card-title .pill{font-weight:400;font-size:.7rem;background:#1c2333;color:#484f58;padding:2px 8px;border-radius:8px;margin-left:8px}
 
-.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;font-size:.82rem}
-.profile-grid .l{color:var(--text2)}
-.profile-grid .v{color:var(--text);font-weight:500;text-align:right}
-.profile-grid .l.highlight{color:var(--gold)}
-.profile-grid .v.highlight{color:var(--gold);font-weight:700}
+/* PLAYER STATUS */
+.stat-row{display:flex;justify-content:space-between;padding:4px 0;font-size:.82rem}
+.stat-row .label{color:#8b949e}
+.stat-row .value{color:#c9d1d9;font-weight:500}
+.stat-row .value.gold{color:#d29922}
+.stat-row .value.exp{color:#bc8cff}
+.stat-row .value.highlight{color:#58a6ff}
 
-.xp-bar-wrap{margin:12px 0 4px}
-.xp-bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
-.xp-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold3),var(--gold2));transition:width 1s ease}
-.xp-label{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text3);margin-top:4px}
+/* BADGES */
+.badge{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.65rem;font-weight:600}
+.badge.normal{background:rgba(56,139,253,.15);color:#58a6ff}
+.badge.nightmare{background:rgba(248,81,73,.15);color:#f85149}
+.badge.hell{background:rgba(210,153,34,.15);color:#d29922}
+.badge.torment{background:rgba(188,140,255,.15);color:#bc8cff}
 
-.banner{background:linear-gradient(135deg,var(--bg4),var(--bg3));border:1px solid var(--border2);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:10px;transition:border-color .2s}
-.banner:hover{border-color:var(--gold)}
-.banner-title{font-size:.9rem;font-weight:600}
-.banner-title.gold{color:var(--gold2)}
-.banner-title.exp{color:var(--exp2)}
-.banner-title.balanced{color:var(--green)}
-.banner-detail{color:var(--text2);font-size:.78rem;margin-top:3px}
-.banner-reward{font-size:.85rem;margin-top:4px}
-.banner-reward .num{font-family:'JetBrains Mono',monospace;font-weight:600}
-.banner-reward.gold .num{color:var(--gold2)}
-.banner-reward.exp .num{color:var(--exp2)}
+/* RECOMMENDATION BOX */
+.rec{background:#1c2333;border-radius:8px;padding:14px 16px;margin-bottom:10px;border-left:3px solid #58a6ff}
+.rec.gold{border-left-color:#d29922}
+.rec.exp{border-left-color:#bc8cff}
+.rec.push{border-left-color:#3fb950}
+.rec.next{border-left-color:#f85149}
+.rec .rec-title{font-size:.82rem;font-weight:600;margin-bottom:4px}
+.rec .rec-title.gold{color:#d29922}
+.rec .rec-title.exp{color:#bc8cff}
+.rec .rec-title.push{color:#3fb950}
+.rec .rec-title.next{color:#f85149}
+.rec p{font-size:.78rem;color:#8b949e;margin:2px 0}
+.rec .val{font-weight:600;font-family:'JetBrains Mono',monospace;color:#c9d1d9}
 
-.guides{display:grid;grid-template-columns:1fr;gap:10px}
-@media(min-width:640px){.guides{grid-template-columns:1fr 1fr}}
-.guide-box{background:var(--bg4);border-radius:var(--radius-sm);padding:12px 14px;border-left:3px solid var(--gold)}
-.guide-box.exp{border-left-color:var(--exp)}
-.guide-box.push{border-left-color:var(--blue)}
-.guide-box.offline{border-left-color:var(--green)}
-.guide-box h4{font-size:.82rem;color:var(--text);margin-bottom:4px}
-.guide-box p{font-size:.78rem;color:var(--text2);margin:2px 0}
-.guide-box .gv{color:var(--gold2);font-weight:600}
-.guide-box .ev{color:var(--exp2);font-weight:600}
-.guide-box .pv{color:var(--blue2);font-weight:600}
-.guide-box .gv-runs{color:var(--text2);font-size:.72rem}
+/* PROGRESS BLOCKER */
+.blocker{background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:12px 14px;margin:8px 0}
+.blocker p{font-size:.78rem;color:#f85149}
+.blocker .title{font-weight:600;font-size:.82rem;margin-bottom:4px}
 
-.table-wrap{overflow-x:auto;margin-top:8px}
-table{width:100%;border-collapse:collapse;font-size:.78rem}
-th{text-align:left;padding:6px 8px;color:var(--text2);font-weight:500;border-bottom:1px solid var(--border);white-space:nowrap}
-td{padding:6px 8px;border-bottom:1px solid var(--bg4);white-space:nowrap}
-tr:hover td{background:var(--bg4)}
-.rank{color:var(--text3);font-weight:700;width:24px;font-size:.72rem}
-.stage-name{font-weight:500;color:var(--text)}
-.stage-sub{color:var(--text3);font-size:.68rem}
-.val-gold{color:var(--gold2);font-weight:600;font-family:'JetBrains Mono',monospace}
-.val-exp{color:var(--exp2);font-weight:600;font-family:'JetBrains Mono',monospace}
+/* TIPS */
+.tips{background:#1c2333;border-radius:8px;padding:14px 16px}
+.tips p{font-size:.78rem;color:#8b949e;margin:3px 0;padding-left:12px}
+.tips .t{color:#c9d1d9}
 
-.show-gold .col-exp{display:none}
-.show-exp .col-gold{display:none}
+/* FOOTER */
+.footer{text-align:center;color:#484f58;font-size:.68rem;padding:24px 0;border-top:1px solid #21262d;margin-top:16px}
+.footer a{color:#58a6ff;text-decoration:none}
 
-.diff-badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:.6rem;font-weight:600;letter-spacing:.3px}
-.diff-badge.normal{background:rgba(79,140,255,.15);color:#4f8cff}
-.diff-badge.nightmare{background:rgba(218,54,51,.15);color:#ff7b72}
-.diff-badge.hell{background:rgba(240,136,62,.15);color:var(--orange)}
-.diff-badge.torment{background:rgba(188,140,255,.15);color:var(--exp2)}
+#output{display:none}
+#error{display:none;background:rgba(248,81,73,.08);border:1px solid #f85149;border-radius:8px;padding:12px;color:#f85149;font-size:.82rem;margin-bottom:14px}
 
-.hero-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:.7rem;margin:1px}
-.hero-badge.h-priest{background:rgba(63,185,80,.15);color:var(--green)}
-.hero-badge.h-ranger{background:rgba(74,140,255,.15);color:var(--blue2)}
-.hero-badge.h-sorcerer{background:rgba(166,134,230,.15);color:var(--exp2)}
-.hero-badge.h-knight{background:rgba(240,136,62,.15);color:var(--orange)}
-.hero-badge.h-hunter{background:rgba(248,81,73,.15);color:var(--red)}
-.hero-badge.h-slayer{background:rgba(218,54,51,.15);color:var(--red)}
-
-.btn-clear{background:var(--bg4);border:1px solid var(--border);color:var(--text2);padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:.75rem;transition:all .2s}
-.btn-clear:hover{background:var(--border);color:var(--text);border-color:var(--red)}
-
-#saveInfo,#results{display:none}
-#error{display:none;background:rgba(248,81,73,.08);border:1px solid var(--red);border-radius:var(--radius);padding:12px 16px;color:var(--red);font-size:.82rem;margin-bottom:16px}
-#error a{color:var(--blue2);text-decoration:underline}
-
-.lvlup-box{background:var(--bg4);border-radius:var(--radius-sm);padding:10px 14px;margin:8px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px}
-.lvlup-box .lvlup-item{font-size:.75rem}
-.lvlup-box .lvlup-item .num{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--exp2)}
-.lvlup-box .lvlup-item .label{color:var(--text2)}
-
-.toggle-bar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
-.toggle-btn{background:var(--bg4);border:1px solid var(--border);color:var(--text2);padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:.75rem;transition:all .2s}
-.toggle-btn:hover{border-color:var(--text3)}
-.toggle-btn.active{background:var(--bg3);border-color:var(--gold);color:var(--gold)}
-
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center;padding:16px}
-.modal-overlay.open{display:flex}
-.modal{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);max-width:480px;width:100%;max-height:80vh;overflow-y:auto;padding:24px;animation:modalIn .2s ease}
-@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
-.modal h3{font-family:'Cinzel',serif;color:var(--gold);font-size:1rem;margin-bottom:12px}
-.modal .close{float:right;background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;padding:4px;line-height:1}
-.modal .close:hover{color:var(--text)}
-.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.82rem}
-.modal-grid .ml{color:var(--text2)}
-.modal-grid .mv{color:var(--text);font-weight:500;text-align:right}
-
-.clickable{cursor:pointer}
-.clickable:hover td{background:var(--bg4)!important}
-
-.hero-icon-sm{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-size:.7rem;font-weight:700;margin-right:2px}
-.hero-icon-sm.h-priest{background:rgba(63,185,80,.2);color:var(--green)}
-.hero-icon-sm.h-ranger{background:rgba(74,140,255,.2);color:var(--blue2)}
-.hero-icon-sm.h-sorcerer{background:rgba(166,134,230,.2);color:var(--exp2)}
-.hero-icon-sm.h-knight{background:rgba(240,136,62,.2);color:var(--orange)}
-.hero-icon-sm.h-hunter{background:rgba(248,81,73,.2);color:var(--red)}
-.hero-icon-sm.h-slayer{background:rgba(218,54,51,.2);color:var(--red)}
-
-.prog-chain{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.prog-step{background:var(--bg4);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-size:.75rem;text-align:center;flex:1;min-width:100px}
-.prog-step.current{border-color:var(--gold)}
-.prog-step.done{opacity:.5}
-.prog-step .step-label{color:var(--text2);font-size:.65rem}
-.prog-step .step-name{color:var(--text);font-weight:500;margin-top:2px}
-
-.footer{text-align:center;color:var(--text3);font-size:.7rem;padding:24px 0 32px;border-top:1px solid var(--border);margin-top:24px}
-.footer a{color:var(--blue2);text-decoration:none}
-.footer a:hover{text-decoration:underline}
-.footer code{font-family:'JetBrains Mono',monospace;background:var(--bg4);padding:1px 6px;border-radius:3px;font-size:.68rem;color:var(--text2)}
-
-@media(max-width:480px){
-  .header h1{font-size:1.2rem;letter-spacing:2px}
-  .profile-grid{grid-template-columns:1fr}
-  .profile-grid .v{text-align:left}
-  .card{padding:14px}
-  table{font-size:.7rem}
-}
+.hero-icon{display:inline-block;width:24px;height:24px;line-height:24px;border-radius:50%;font-size:.6rem;font-weight:700;text-align:center;margin:0 1px}
+.hero-icon.priest{background:rgba(63,185,80,.2);color:#3fb950}
+.hero-icon.ranger{background:rgba(56,139,253,.2);color:#58a6ff}
+.hero-icon.sorcerer{background:rgba(188,140,255,.2);color:#bc8cff}
+.hero-icon.knight{background:rgba(210,153,34,.2);color:#d29922}
+.hero-icon.hunter{background:rgba(248,81,73,.2);color:#f85149}
+.hero-icon.slayer{background:rgba(248,81,73,.2);color:#f85149}
 </style>
 </head>
 <body>
-<div class="bg-pattern"></div>
 <div class="container">
 
 <div class="header">
   <h1>TBH <span>Farming Optimizer</span></h1>
-  <div class="sub">Task Bar Hero &mdash; Analisador de Farming</div>
-  <div class="line"></div>
+  <div class="sub">Solte seu save e descubra o que fazer</div>
 </div>
 
 <div class="drop-zone" id="dropZone">
   <div class="icon">&#128230;</div>
-  <div class="dz-title">Solte seu save aqui</div>
-  <div class="dz-sub">ou clique para selecionar &bull; .es3 e .bak</div>
-  <div class="dz-hint">%USERPROFILE%\AppData\LocalLow\TesseractStudio\TaskbarHero\</div>
-  <span id="fileLabel"></span>
+  <p><strong>Solte seu save aqui</strong></p>
+  <p>.es3 ou .bak &mdash; clique para selecionar</p>
+  <div class="hint">%USERPROFILE%\AppData\LocalLow\TesseractStudio\TaskbarHero\</div>
   <input type="file" id="fileInput" accept=".es3,.bak,*">
 </div>
 
-<div id="loading"><div class="spinner"></div><p>Decriptando save &amp; analisando stages...</p></div>
+<div id="loading"><div class="spinner"></div><p>Decriptando save...</p></div>
 <div id="error"></div>
-<div id="saveInfo"></div>
-<div id="results"></div>
+<div id="output"></div>
 
 <div class="footer">
-  Dados via <a href="https://taskbarhero.wiki" target="_blank">TBH Wiki</a> &middot;
-  Senha: <code>emuMqG3bLYJ938ZDCfieWJ</code> &middot; 100% local &bull;
-  <a href="#" onclick="if(confirm('Limpar save carregado?')){clearSave();}">Limpar save</a>
+  <a href="https://github.com/Holdboy1/tbh-optimizer" target="_blank">GitHub</a> &middot;
+  100% local &middot; Dados via <a href="https://taskbarhero.wiki" target="_blank">TBH Wiki</a>
 </div>
 </div>
 
 <script>
 const PASSWORD = "emuMqG3bLYJ938ZDCfieWJ";
 const STAGES_URL = "https://taskbarhero.wiki/data/stages.json";
-const DIFF = ["NORMAL","NIGHTMARE","HELL","TORMENT"];
-const HERO_MAP = {201:{n:"Priest",c:"h-priest",i:"+"},
-  301:{n:"Ranger",c:"h-ranger",i:"~>"},
-  401:{n:"Sorcerer",c:"h-sorcerer",i:"*"},
-  101:{n:"Knight",c:"h-knight",i:"#"},
-  501:{n:"Hunter",c:"h-hunter",i:"`>"},
-  601:{n:"Slayer",c:"h-slayer",i:"!"}};
+const DIFFS = ["NORMAL","NIGHTMARE","HELL","TORMENT"];
+const HEROES = {
+  101:"Knight", 201:"Priest", 301:"Ranger",
+  401:"Sorcerer", 501:"Hunter", 601:"Slayer"
+};
+const HERO_CLASS = {
+  101:"knight", 201:"priest", 301:"ranger",
+  401:"sorcerer", 501:"hunter", 601:"slayer"
+};
 const CLEAR_S = 30;
 
-const $ = id => document.getElementById(id);
-const dz = $("dropZone"), fi = $("fileInput"), fl = $("fileLabel");
-const si = $("saveInfo"), re = $("results"), ee = $("error"), ld = $("loading");
+const dz = document.getElementById("dropZone");
+const fi = document.getElementById("fileInput");
+const out = document.getElementById("output");
+const err = document.getElementById("error");
+const ld = document.getElementById("loading");
 
 dz.onclick = () => fi.click();
 dz.ondragover = e => { e.preventDefault(); dz.classList.add("dragover"); };
 dz.ondragleave = () => dz.classList.remove("dragover");
-dz.ondrop = e => { e.preventDefault(); dz.classList.remove("dragover"); const f=e.dataTransfer.files[0]; if(f)go(f).catch(err => console.error(err)); };
-fi.onchange = e => { if(e.target.files[0])go(e.target.files[0]).catch(err => console.error(err)); };
+dz.ondrop = e => { e.preventDefault(); dz.classList.remove("dragover"); const f=e.dataTransfer.files[0]; if(f)process(f); };
+fi.onchange = e => { if(e.target.files[0])process(e.target.files[0]); };
 
 async function pbkdf2(pw, salt) {
-  if (!crypto?.subtle) throw new Error("crypto.subtle nao disponivel - use HTTPS ou localhost");
+  if (!crypto?.subtle) throw new Error("Criptografia indisponivel - use HTTPS");
   const key = await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveBits"]);
   return new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",salt,iterations:100,hash:"SHA-1"},key,128));
 }
 
 async function decrypt(buf) {
   const d = new Uint8Array(buf);
-  if (d.length < 17) throw new Error("Arquivo muito pequeno para ser um save do TBH");
+  if (d.length < 17) throw new Error("Arquivo muito pequeno");
   const salt = d.slice(0,16);
   const k = await pbkdf2(PASSWORD, salt);
   const key = await crypto.subtle.importKey("raw",k,{name:"AES-CBC"},false,["decrypt"]);
@@ -264,27 +159,23 @@ async function decrypt(buf) {
   return JSON.parse(new TextDecoder("utf-8").decode(dec));
 }
 
-function estLevel(maxStageKey) {
-  const k = Number(maxStageKey);
-  if(!k) return 1;
+function estLevel(k) {
+  k = Number(k); if(!k) return 1;
   return Math.max(1, ((Math.floor(k/100)%10)-1)*10 + (k%100) + (Math.floor(k/1000)-1)*32 - 2);
-}
-
-function calcExpForLevel(lv) {
-  return Math.round(100 * Math.pow(lv, 1.5) + 200 * lv);
 }
 
 function parseSave(save) {
   let psd={}, asd={};
   try{psd=JSON.parse(save.PlayerSaveData?.value||"{}")}catch{}
   try{asd=JSON.parse(save.AccountSaveData?.value||"{}")}catch{}
-  const csd = psd.commonSaveData || {};
-  const ms = csd.maxCompletedStage || 0;
+  const c = psd.commonSaveData||{};
   return {
-    maxStage: ms, curStage: csd.currentStageKey || ms,
-    level: estLevel(ms), playTime: csd.playTime||0,
-    version: csd.version||"?", heroes: csd.arrangedHeroKey||[],
-    gold: asd.gold ?? null, gem: asd.gem ?? null,
+    maxStage: c.maxCompletedStage||0,
+    curStage: c.currentStageKey||c.maxCompletedStage||0,
+    level: estLevel(c.maxCompletedStage),
+    playTime: c.playTime||0,
+    heroes: c.arrangedHeroKey||[],
+    gold: asd.gold ?? null
   };
 }
 
@@ -294,348 +185,217 @@ async function fetchStages() {
   return r.json();
 }
 
-function analyze(stages, pd) {
-  const lv = pd.level, ms = pd.maxStage;
-  let hdi = 0;
-  if(ms>0) {
-    const p = Math.floor(ms/1000);
-    for(let i=0;i<DIFF.length;i++){if(i+1===p){hdi=i;break}}
-  }
-  return stages.map(s => {
-    const sl = s.level, g = (s.goldPerClear||0)*10, e = (s.expPerClear||0)*10;
-    const di = DIFF.indexOf(s.difficulty);
-    let ok=true, reasons=[];
-    if(sl>lv+10){ok=false;reasons.push("lv alto demais");}
-    if(di>hdi){ok=false;reasons.push("dificuldade bloqueada");}
-    const pen = sl < Math.max(1, lv-20);
-    return {
-      key:s.key, act:s.act, no:s.no, nm:s.name?.["en-US"]||"",
-      diff:s.difficulty, level:sl,
-      gold:g, exp:e,
-      goldEff: g * (pen ? 0.5 : 1),
-      expEff: e * (pen ? 0.5 : 1),
-      ok, reasons, waves:s.waves||0,
-      kills:s.kills||0,
-      boss:s.boss?.name?.["en-US"]||"",
-      display: `${s.act}-${String(s.no).padStart(2,"0")} ${s.name?.["en-US"]||""}`
-    };
-  });
-}
-
 function fmtNum(n) {
-  if(n>=1e9) return (n/1e9).toFixed(2)+"B";
   if(n>=1e6) return (n/1e6).toFixed(2)+"M";
   if(n>=1e3) return (n/1e3).toFixed(1)+"K";
   return n.toLocaleString();
 }
 
-function heroIcon(id) {
-  const h = HERO_MAP[id];
-  if(!h) return `<span class="hero-icon-sm h-priest">?</span>`;
-  return `<span class="hero-icon-sm ${h.c}" title="${h.n}">${h.i}</span>`;
+function fmtTime(s) {
+  const h=Math.floor(s/3600), m=Math.floor((s%3600)/60);
+  return h>0 ? `${h}h ${m}m` : `${m}m`;
 }
 
-const stageCache = new Map();
-
-function render(pd, all) {
-  si.style.display = "block";
-  re.style.display = "block";
-
-  const farmable = all.filter(s=>s.ok);
-  const byGold = [...farmable].sort((a,b)=>b.goldEff - a.goldEff);
-  const byExp = [...farmable].sort((a,b)=>b.expEff - a.expEff);
-  const byBalanced = [...farmable].sort((a,b)=>(b.goldEff+b.expEff*0.3)-(a.goldEff+a.expEff*0.3));
-
-  const bg = byGold[0], be = byExp[0], bb = byBalanced[0];
-  const hrs = (pd.playTime/3600).toFixed(1);
-
-  const ma = Math.floor(pd.maxStage/100);
-  const md = DIFF[Math.floor(pd.maxStage/1000)-1]||"?";
-  const mact = Math.floor((pd.maxStage/100)%10);
-  const mstg = pd.maxStage%100;
-
-  const lvl = pd.level;
-  const nextLvl = lvl + 1;
-  const expNeeded = calcExpForLevel(nextLvl);
-
-  si.innerHTML = `
-    <div class="card">
-      <div class="card-title">
-        Perfil do Jogador
-        <span class="badge">v${pd.version}</span>
-      </div>
-      <div class="profile-grid">
-        <div class="l highlight">Nivel</div><div class="v highlight">${lvl}</div>
-        <div class="l">Maior Stage</div><div class="v">${mact}-${String(mstg).padStart(2,"0")} <span class="diff-badge ${md.toLowerCase()}">${md}</span></div>
-        <div class="l">Stage Atual</div><div class="v">${Math.floor((pd.curStage/100)%10)}-${String(pd.curStage%100).padStart(2,"0")}</div>
-        <div class="l">Herois</div><div class="v">${pd.heroes.length} ${pd.heroes.map(heroIcon).join("")}</div>
-        <div class="l">Tempo</div><div class="v">${hrs}h</div>
-        ${pd.gold !== null ? `<div class="l">Ouro</div><div class="v" style="color:var(--gold2)">${fmtNum(pd.gold)}</div>` : ""}
-        ${pd.gem !== null ? `<div class="l">Gemas</div><div class="v" style="color:var(--exp2)">${fmtNum(pd.gem)}</div>` : ""}
-      </div>
-      <div class="xp-bar-wrap">
-        <div class="xp-bar"><div class="xp-bar-fill" style="width:${Math.min(100,((expNeeded||1)/100)%100)}%"></div></div>
-        <div class="xp-label">
-          <span>Para lv ${nextLvl}: <strong>${fmtNum(expNeeded)}</strong> EXP</span>
-          <span>Progresso aproximado</span>
-        </div>
-      </div>
-    </div>`;
-
-  if(!farmable.length) {
-    re.innerHTML = `<div class="card"><div class="card-title">Sem stages viaveis</div><p style="color:var(--text2);font-size:.85rem">Complete stages mais faceis para destravar novos conteudos.</p></div>`;
-    return;
-  }
-
-  const bestExpClear = be ? be.expEff : 0;
-  const bestGoldClear = bg ? bg.goldEff : 0;
-  const runsToLvl = bestExpClear > 0 ? Math.ceil(expNeeded / bestExpClear) : 0;
-  const hoursToLvl = runsToLvl > 0 ? (runsToLvl * CLEAR_S / 3600).toFixed(1) : 0;
-
-  let html = '<div class="card">';
-  html += `<div class="card-title">Recomendacao <span class="badge">${farmable.length} stages viaveis</span></div>`;
-
-  if(bg && be && bg.key === be.key) {
-    html += `<div class="banner">
-      <div class="banner-title gold">${bg.display}</div>
-      <div class="banner-detail">${bg.waves} waves, lv ${bg.level} | Boss: ${bg.boss}</div>
-      <div class="banner-reward gold"><span class="num">${bg.gold.toLocaleString()}</span> gold/clear &bull; <span class="num">~${fmtNum(bg.goldEff*120)}</span>/h</div>
-      <div class="banner-reward exp"><span class="num">${bg.exp.toLocaleString()}</span> exp/clear &bull; <span class="num">~${fmtNum(bg.expEff*120)}</span>/h</div>
-    </div>`;
-  } else {
-    if(bg) html += `<div class="banner">
-      <div class="banner-title gold">GOLD: ${bg.display}</div>
-      <div class="banner-detail">${bg.waves} waves, lv ${bg.level}</div>
-      <div class="banner-reward gold"><span class="num">${bg.gold.toLocaleString()}</span> gold/clear &bull; <span class="num">~${fmtNum(bg.goldEff*120)}</span>/h</div>
-    </div>`;
-    if(be) html += `<div class="banner">
-      <div class="banner-title exp">EXP: ${be.display}</div>
-      <div class="banner-detail">${be.waves} waves, lv ${be.level}</div>
-      <div class="banner-reward exp"><span class="num">${be.exp.toLocaleString()}</span> exp/clear &bull; <span class="num">~${fmtNum(be.expEff*120)}</span>/h</div>
-    </div>`;
-  }
-  if(bb) html += `<div class="banner" style="border-color:rgba(63,185,80,.3)">
-    <div class="banner-title balanced">MELHOR CUSTO-BENEFICIO</div>
-    <div style="font-size:.9rem;font-weight:500">${bb.display}</div>
-    <div class="banner-detail">${fmtNum(bb.goldEff*120)} gold/h &bull; ${fmtNum(bb.expEff*120)} exp/h &bull; ${bb.waves} waves</div>
-  </div>`;
-
-  if(bestExpClear > 0) {
-    html += `<div class="lvlup-box">
-      <span class="lvlup-item">Para lv ${nextLvl}: <span class="num">${fmtNum(expNeeded)}</span> EXP</span>
-      <span class="lvlup-item"><span class="num">${runsToLvl}</span> runs ~ <span class="num">${hoursToLvl}h</span> em ${be.display.replace(/<[^>]*>/g,'')}</span>
-      <span class="lvlup-item"><span class="num">${Math.ceil(expNeeded/(bestGoldClear||1))}</span> runs ~ <span class="num">${((Math.ceil(expNeeded/(bestGoldClear||1))*CLEAR_S)/3600).toFixed(1)}h</span> em ${bg.display.replace(/<[^>]*>/g,'')}</span>
-    </div>`;
-  }
-
-  html += `<div class="card-title" style="margin-top:4px">Guias Rapidos</div><div class="guides">`;
-  if(bg) html += `<div class="guide-box">
-    <h4>[1] FARMAR GOLD</h4>
-    <p>Va para: <span class="gv">${bg.display}</span></p>
-    <p>${bg.gold.toLocaleString()} gold/clear | ${fmtNum(bg.goldEff*120)}/h</p>
-    <p class="gv-runs">Use Gold Find + pet de ouro</p>
-  </div>`;
-  if(be) html += `<div class="guide-box exp">
-    <h4>[2] FARMAR EXP</h4>
-    <p>Va para: <span class="ev">${be.display}</span></p>
-    <p>${be.exp.toLocaleString()} exp/clear | ${fmtNum(be.expEff*120)}/h</p>
-    <p class="gv-runs">Use runas de EXP + pet de exp</p>
-  </div>`;
-  const push = farmable.filter(s=>s.level>=lvl-2&&s.level<=lvl+5).sort((a,b)=>b.gold - a.gold).slice(0,3);
-  if(push.length) {
-    html += `<div class="guide-box push">
-      <h4>[3] PROGRESSAO (PUSH)</h4>`;
-    push.forEach(s => {
-      const d = s.level - lvl;
-      const sg = d > 0 ? "+"+d : d < 0 ? d : "=";
-      html += `<p><span class="pv">${s.display}</span> (lv ${s.level}, ${sg} seu nivel)</p>`;
-    });
-    html += `</div>`;
-  }
-  if(be) html += `<div class="guide-box offline">
-    <h4>[4] OFFLINE FARM</h4>
-    <p>Deixe em: <span style="color:var(--green);font-weight:600">${be.display}</span></p>
-    <p>Recompensa baseada no maior stage</p>
-  </div>`;
-  html += `</div></div>`;
-
-  const topN = 15;
-  const topG = byGold.slice(0, topN);
-  const topE = byExp.slice(0, topN);
-  const seen = new Set();
-  const combined = [];
-  for(let sg of topG) if(!seen.has(sg.key)) { combined.push(sg); seen.add(sg.key); }
-  for(let se of topE) if(!seen.has(se.key)) { combined.push(se); seen.add(se.key); }
-
-  html += `<div class="card">
-    <div class="card-title">Tabela Comparativa <span class="badge">TOP ${combined.length}</span></div>
-    <div class="toggle-bar">
-      <button class="toggle-btn active" onclick="toggleCol(this,'all')">Tudo</button>
-      <button class="toggle-btn" onclick="toggleCol(this,'gold')">So Gold</button>
-      <button class="toggle-btn" onclick="toggleCol(this,'exp')">So EXP</button>
-    </div>
-    <div class="table-wrap" id="stageTable">
-    <table><thead><tr>
-      <th>#</th><th>Stage</th><th class="col-gold">Gold/h</th><th class="col-exp">EXP/h</th><th>Waves</th><th class="col-gold">Gold/clear</th><th class="col-exp">EXP/clear</th><th>Lv</th>
-    </tr></thead><tbody>`;
-  combined.forEach((s,i) => {
-    const rankGold = topG.findIndex(x=>x.key===s.key)+1;
-    const rankExp = topE.findIndex(x=>x.key===s.key)+1;
-    const rankStr = rankGold > 0 && rankExp > 0 ? `${rankGold}G/${rankExp}E` : rankGold > 0 ? `${rankGold}G` : `${rankExp}E`;
-    html += `<tr class="clickable" onclick="showDetail(${i})">
-      <td class="rank">${rankStr}</td>
-      <td><div class="stage-name">${s.display}</div><div class="stage-sub"><span class="diff-badge ${s.diff.toLowerCase()}">${s.diff}</span></div></td>
-      <td class="col-gold val-gold">${fmtNum(s.goldEff*120)}</td>
-      <td class="col-exp val-exp">${fmtNum(s.expEff*120)}</td>
-      <td>${s.waves}</td>
-      <td class="col-gold" style="color:var(--gold2)">${s.gold.toLocaleString()}</td>
-      <td class="col-exp" style="color:var(--exp2)">${s.exp.toLocaleString()}</td>
-      <td>${s.level}</td>
-    </tr>`;
-    stageCache.set(i, s);
-  });
-  html += `</tbody></table></div></div>`;
-
-  const diffUnlocks = [
-    {name:"NORMAL", prefix:1, cond:"Sempre disponivel"},
-    {name:"NIGHTMARE", prefix:2, cond:"Complete Ato 3 em NORMAL"},
-    {name:"HELL", prefix:3, cond:"Complete Ato 3 em NIGHTMARE"},
-    {name:"TORMENT", prefix:4, cond:"Complete Ato 3 em HELL"}
-  ];
-  const curDiffIdx = Math.max(0, DIFF.indexOf(md));
-
-  html += `<div class="card">
-    <div class="card-title">Progressao de Dificuldade</div>
-    <div class="prog-chain">`;
-  diffUnlocks.forEach((d,i) => {
-    const cls = i < curDiffIdx ? "done" : i === curDiffIdx ? "current" : "";
-    html += `<div class="prog-step ${cls}">
-      <div class="step-label">${i < curDiffIdx ? "Liberado" : i === curDiffIdx ? "Atual" : "Bloqueado"}</div>
-      <div class="step-name">${d.name}</div>
-    </div>`;
-  });
-  html += `</div>`;
-
-  const nextDiff = diffUnlocks[curDiffIdx+1];
-  if(nextDiff) {
-    html += `<div style="margin-top:10px;font-size:.8rem;color:var(--text2);background:var(--bg4);padding:8px 12px;border-radius:var(--radius-sm)">
-      Proximo: <strong style="color:var(--gold2)">${nextDiff.name}</strong> &mdash; ${nextDiff.cond}
-    </div>`;
-  }
-
-  const locked = all.filter(s=>!s.ok).slice(0,5);
-  if(locked.length) {
-    html += `<div class="card-title" style="margin-top:16px">Gargalos</div>`;
-    locked.forEach(s => html += `<div style="font-size:.78rem;color:var(--text2);margin:3px 0">${s.display} &mdash; ${s.reasons.join(", ")}</div>`);
-  }
-  html += `</div>`;
-
-  html += `<div class="card">
-    <div class="card-title">Dicas</div>
-    <div style="font-size:.8rem;color:var(--text2);line-height:1.7">
-    &bull; <strong style="color:var(--text)">Runa Command</strong> (+heroi) e <strong style="color:var(--text)">Awakening</strong> (+skill) sao prioridade<br>
-    &bull; <strong style="color:var(--text)">Priest + Ranger + Sorcerer</strong> = melhor trio de farm<br>
-    &bull; Equipamentos com Gold Find e EXP Increase aceleram o farm<br>
-    &bull; Complete o Ato 3 em Normal para Nightmare (recompensa 5x maior)<br>
-    &bull; Use <a href="https://taskbarhero.net/save-inspector" target="_blank" style="color:var(--blue2)">Save Inspector</a> para analise detalhada
-    </div>
-  </div>`;
-
-  re.innerHTML = html;
-
-  try {
-    const cached = {heroes:pd.heroes, level:pd.level, maxStage:pd.maxStage, playTime:pd.playTime, version:pd.version, gold:pd.gold, gem:pd.gem};
-    localStorage.setItem("tbh_last_save", JSON.stringify(cached));
-  } catch {}
+function diffOf(key) {
+  return DIFFS[Math.floor(Number(key)/1000)-1]||"NORMAL";
 }
 
-function toggleCol(btn, mode) {
-  document.querySelectorAll(".toggle-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  const tbl = $("stageTable");
-  tbl.classList.remove("show-gold","show-exp");
-  if(mode==="gold") tbl.classList.add("show-gold");
-  else if(mode==="exp") tbl.classList.add("show-exp");
+function formatStage(key) {
+  const n = Number(key);
+  if(!n) return "?";
+  const a = Math.floor((n/100)%10);
+  const s = n%100;
+  const d = diffOf(n);
+  return `${a}-${String(s).padStart(2,"0")} ${d}`;
 }
 
-function showDetail(idx) {
-  const s = stageCache.get(idx);
-  if(!s) return;
-  const overlay = document.createElement("div");
-  overlay.className = "modal-overlay open";
-  overlay.onclick = e => { if(e.target===overlay)overlay.remove(); };
-  overlay.innerHTML = `
-    <div class="modal">
-      <button class="close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
-      <h3>${s.display}</h3>
-      <div class="modal-grid">
-        <span class="ml">Dificuldade</span><span class="mv"><span class="diff-badge ${s.diff.toLowerCase()}">${s.diff}</span></span>
-        <span class="ml">Nivel do stage</span><span class="mv">${s.level}</span>
-        <span class="ml">Waves</span><span class="mv">${s.waves}</span>
-        <span class="ml">Kills</span><span class="mv">${s.kills.toLocaleString()}</span>
-        <span class="ml">Gold / clear</span><span class="mv" style="color:var(--gold2);font-weight:600">${s.gold.toLocaleString()}</span>
-        <span class="ml">Gold / hora</span><span class="mv" style="color:var(--gold2);font-weight:600">${fmtNum(s.goldEff*120)}</span>
-        <span class="ml">EXP / clear</span><span class="mv" style="color:var(--exp2);font-weight:600">${s.exp.toLocaleString()}</span>
-        <span class="ml">EXP / hora</span><span class="mv" style="color:var(--exp2);font-weight:600">${fmtNum(s.expEff*120)}</span>
-        <span class="ml">Gold / wave</span><span class="mv" style="color:var(--gold2)">${s.waves>0?Math.round(s.gold/s.waves).toLocaleString():0}</span>
-        <span class="ml">EXP / wave</span><span class="mv" style="color:var(--exp2)">${s.waves>0?Math.round(s.exp/s.waves).toLocaleString():0}</span>
-      </div>
-      ${s.boss ? `<div style="margin-top:12px;padding:8px 10px;background:var(--bg4);border-radius:var(--radius-sm);font-size:.8rem">
-        <span style="color:var(--text2)">Boss:</span> <strong>${s.boss}</strong>
-      </div>` : ""}
-    </div>`;
-  document.body.appendChild(overlay);
+function needsAct3(d) {
+  // NORMAL d=0: complete act3
+  if(d === 0) return {act:3, prefix:1};
+  return null;
 }
 
-async function go(file) {
-  ee.style.display = "none";
-  si.style.display = "none";
-  re.style.display = "none";
+async function process(file) {
+  err.style.display = "none";
+  out.style.display = "none";
   ld.style.display = "block";
 
-  fl.textContent = "Arquivo: " + file.name;
-  dz.classList.add("has-file");
-
   try {
-    console.log("[TBH] Lendo arquivo:", file.name, file.size, "bytes");
     const buf = await file.arrayBuffer();
-    console.log("[TBH] Arquivo lido:", buf.byteLength, "bytes");
-
-    console.log("[TBH] Decriptando ES3...");
     const save = await decrypt(buf);
-    console.log("[TBH] Decriptado com sucesso");
-
     ld.style.display = "none";
     dz.style.display = "none";
 
     const pd = parseSave(save);
-    console.log("[TBH] Save parseado:", JSON.stringify(pd));
-
-    console.log("[TBH] Buscando stages...");
     const stages = await fetchStages();
-    console.log("[TBH] Stages carregados:", stages.length);
 
-    const all = analyze(stages, pd);
-    render(pd, all);
+    // Calculate stats
+    const lv = pd.level;
+    const ms = pd.maxStage;
+    const mact = Math.floor((ms/100)%10);
+    const mstg = ms%100;
+    const curDiff = diffOf(ms);
+    const curDiffIdx = DIFFS.indexOf(curDiff);
+    const hrs = fmtTime(pd.playTime);
+
+    // Available difficulties
+    const availDiffs = DIFFS.slice(0, curDiffIdx + 1);
+
+    // Filter farmable stages
+    const farmable = stages.filter(s => {
+      const si = DIFFS.indexOf(s.difficulty);
+      const sl = s.level;
+      if (si > curDiffIdx) return false;
+      if (sl > lv + 10) return false;
+      return true;
+    });
+
+    // Best gold & exp
+    const byGold = [...farmable].sort((a,b)=>b.goldPerClear - a.goldPerClear);
+    const byExp = [...farmable].sort((a,b)=>b.expPerClear - a.expPerClear);
+    const bestGold = byGold[0];
+    const bestExp = byExp[0];
+
+    // Check next unlock
+    let nextDiff = DIFFS[curDiffIdx + 1];
+    let unlockMsg = "";
+    let isBlocked = false;
+
+    if (nextDiff) {
+      // Check if they have a full act cleared on current difficulty
+      // Simple heuristic: need to reach x099 where x is difficulty prefix
+      // For NORMAL->NIGHTMARE: need maxStage >= 3099 or at least act 3 stage 10
+      // More precisely: complete all 10 stages of act 3
+      const neededStage = (curDiffIdx + 1) * 1000 + 3 * 100 + 10; // e.g. 1310 for NORMAL act 3-10
+      if (ms < neededStage) {
+        isBlocked = true;
+        unlockMsg = `Complete <strong>3-10</strong> em <strong>${curDiff}</strong> para liberar <strong>${nextDiff}</strong>`;
+      } else {
+        unlockMsg = `<strong>${nextDiff}</strong> disponivel! Vá para o stage 1 de ${nextDiff}.`;
+      }
+    }
+
+    // Build output
+    let html = '<div class="card">';
+    html += `<div class="card-title">Status do Jogador</div>`;
+    html += `<div class="stat-row"><span class="label">Nivel</span><span class="value highlight">${lv}</span></div>`;
+    html += `<div class="stat-row"><span class="label">Maior stage</span><span class="value">${mact}-${String(mstg).padStart(2,"0")} <span class="badge ${curDiff.toLowerCase()}">${curDiff}</span></span></div>`;
+
+    const heroNames = pd.heroes.map(h => {
+      const cls = HERO_CLASS[h];
+      return `<span class="hero-icon ${cls}">${HEROES[h]?.[0]||"?"}</span> ${HEROES[h]||"Heroi"}`;
+    });
+    html += `<div class="stat-row"><span class="label">Herois</span><span class="value">${heroNames.join(", ")}</span></div>`;
+    html += `<div class="stat-row"><span class="label">Tempo jogado</span><span class="value">${hrs}</span></div>`;
+    if (pd.gold !== null) {
+      html += `<div class="stat-row"><span class="label">Ouro</span><span class="value gold">${fmtNum(pd.gold)}</span></div>`;
+    }
+    html += `</div>`;
+
+    // Blockers / Next steps
+    html += '<div class="card">';
+    html += `<div class="card-title">Proximo Passo</div>`;
+
+    if (isBlocked) {
+      html += `<div class="blocker"><div class="title">&#9888; Bloqueio de dificuldade</div><p>${unlockMsg}</p></div>`;
+    } else if (nextDiff) {
+      html += `<div class="rec next"><div class="rec-title next">&#9989; ${unlockMsg}</div></div>`;
+    } else {
+      html += `<p style="color:#8b949e;font-size:.82rem">Voce desbloqueou todas as dificuldades!</p>`;
+    }
+
+    // Show available stages count
+    html += `<div class="stat-row" style="margin-top:10px"><span class="label">Stages viaveis</span><span class="value">${farmable.length} de ${stages.length}</span></div>`;
+    html += `<div class="stat-row"><span class="label">Dificuldades</span><span class="value">${availDiffs.map(d=>`<span class="badge ${d.toLowerCase()}">${d}</span>`).join(" ")}</span></div>`;
+    html += `</div>`;
+
+    // Recommendations
+    html += '<div class="card">';
+    html += `<div class="card-title">Recomendacao de Mapas</div>`;
+
+    if (bestGold) {
+      const g = (bestGold.goldPerClear||0) * 10;
+      html += `<div class="rec gold">
+        <div class="rec-title gold">Onde farmar GOLD</div>
+        <p><strong>${bestGold.act}-${String(bestGold.no).padStart(2,"0")} ${bestGold.name?.["en-US"]||""}</strong> <span class="badge ${bestGold.difficulty.toLowerCase()}">${bestGold.difficulty}</span></p>
+        <p><span class="val">${fmtNum(g)}</span> gold/clear &bull; <span class="val">~${fmtNum(g*120)}</span>/hora</p>
+        <p>${bestGold.waves||0} waves &bull; Lv ${bestGold.level}</p>
+        <p style="margin-top:4px;color:#484f58">Use equipamentos Gold Find e pet de ouro</p>
+      </div>`;
+    }
+
+    if (bestExp && bestExp.key !== bestGold?.key) {
+      const e = (bestExp.expPerClear||0) * 10;
+      html += `<div class="rec exp">
+        <div class="rec-title exp">Onde farmar EXP</div>
+        <p><strong>${bestExp.act}-${String(bestExp.no).padStart(2,"0")} ${bestExp.name?.["en-US"]||""}</strong> <span class="badge ${bestExp.difficulty.toLowerCase()}">${bestExp.difficulty}</span></p>
+        <p><span class="val">${fmtNum(e)}</span> exp/clear &bull; <span class="val">~${fmtNum(e*120)}</span>/hora</p>
+        <p>${bestExp.waves||0} waves &bull; Lv ${bestExp.level}</p>
+        <p style="margin-top:4px;color:#484f58">Use runas de EXP e pet de experiencia</p>
+      </div>`;
+    }
+
+    // Push recommendation
+    const push = farmable
+      .filter(s => s.level >= lv - 2 && s.level <= lv + 5)
+      .sort((a,b) => b.level - a.level)
+      .slice(0, 1);
+    if (push.length) {
+      const p = push[0];
+      const diff = p.level - lv;
+      const sg = diff > 0 ? `+${diff}` : diff < 0 ? `${diff}` : "=";
+      html += `<div class="rec push">
+        <div class="rec-title push">Proximo stage para PUSH</div>
+        <p><strong>${p.act}-${String(p.no).padStart(2,"0")} ${p.name?.["en-US"]||""}</strong> <span class="badge ${p.difficulty.toLowerCase()}">${p.difficulty}</span></p>
+        <p>Lv ${p.level} (${sg} seu nivel) &bull; ${p.waves||0} waves</p>
+      </div>`;
+    }
+
+    html += `</div>`;
+
+    // Tips
+    html += '<div class="card">';
+    html += `<div class="card-title">Dicas pra Melhorar</div>`;
+    html += `<div class="tips">`;
+
+    const hasSorcerer = pd.heroes.includes(401);
+    const hasPriest = pd.heroes.includes(201);
+    const hasRanger = pd.heroes.includes(301);
+
+    if (hasSorcerer && hasPriest && hasRanger) {
+      html += `<p class="t">&#10003; Voce ja tem o trio ideal (Sorcerer + Priest + Ranger)</p>`;
+    } else {
+      html += `<p>&#9679; Priorize conseguir <strong class="t">Sorcerer + Priest + Ranger</strong> (melhor trio de farm)</p>`;
+    }
+
+    // Runes
+    html += `<p>&#9679; Priorize <strong class="t">Runa Command</strong> (+heroi) e <strong class="t">Awakening</strong> (+skill)</p>`;
+
+    // Gold find
+    if (pd.gold !== null && pd.gold < 100000) {
+      html += `<p>&#9679; Equipe <strong class="t">Gold Find</strong> nos equipamentos pra acelerar economia</p>`;
+    }
+
+    // Progression
+    if (nextDiff) {
+      html += `<p>&#9679; Foque em completar <strong class="t">Ato 3</strong> em ${curDiff} para liberar ${nextDiff}</p>`;
+    }
+
+    html += `</div></div>`;
+
+    out.innerHTML = html;
+    out.style.display = "block";
+
   } catch(e) {
-    console.error("[TBH] ERRO:", e);
+    console.error(e);
     ld.style.display = "none";
     let msg = e.message;
-    if(e instanceof TypeError && e.message.includes("subtle")) {
-      msg = "API de criptografia nao disponivel. Use HTTPS (Netlify) ou localhost.";
-    } else if(e.message.includes("fetch") || e.message.includes("NetworkError")) {
-      msg = "Erro ao buscar dados dos stages. Verifique sua conexao.";
-    } else if(e.message.includes("AES") || e.message.includes("CBC") || e.message.includes("decrypt")) {
-      msg = "Falha na decriptacao. O arquivo pode ser invalido ou de outro jogo.";
-    }
-    ee.innerHTML = `<strong>Erro:</strong> ${msg}`;
-    ee.style.display = "block";
+    if (msg.includes("crypto") || msg.includes("subtle")) msg = "Criptografia indisponivel no navegador. Tente Chrome/Edge atualizado.";
+    else if (msg.includes("fetch")) msg = "Nao foi possivel carregar dados dos stages. Verifique sua internet.";
+    else if (msg.includes("AES") || msg.includes("CBC")) msg = "Falha ao decriptar o save. Confirme se e um arquivo valido do TBH.";
+    err.innerHTML = `<strong>Erro:</strong> ${msg}`;
+    err.style.display = "block";
   }
-}
-
-function clearSave() {
-  localStorage.removeItem("tbh_last_save");
-  location.reload();
 }
 </script>
 </body>
